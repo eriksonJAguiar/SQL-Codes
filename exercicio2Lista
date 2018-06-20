@@ -1,0 +1,62 @@
+﻿create table empresa(
+
+	n_contrib int not null,
+	nome varchar(100),
+	menemonica varchar(50),
+	
+	constraint pk_contrib primary key (n_contrib)
+
+);
+create table local(
+
+	n_contrib int not null,
+	n_filial int not null,
+	morada varchar(50) not null,
+	telefone varchar(12) not null,
+	
+	constraint pk_local primary key(n_contrib,n_filial),
+	constraint fk_contrib foreign key(n_contrib) references empresa(n_contrib)
+
+);
+create table empregado(
+	n_emp int not null,
+	nome varchar(100) not null,
+	morada varchar(50) not null,
+	data_nasc date not null,
+	n_contrib_empresa int not null,
+	n_filial int not null not null,
+	extensao varchar(50) not null,
+
+	constraint pk_empregado primary key(n_emp),
+	constraint fk_empregado_local foreign key(n_contrib_empresa,n_filial) references local(n_contrib,n_filial)
+);
+
+
+drop database Exercicios;
+
+alter table empregado 
+	alter column n_contrib_empregado int not null;
+
+alter table local 
+	alter column telefone type varchar(20);
+
+insert into empresa values(1001,'Bomnome','BN');
+insert into empresa values(1002,'Show','SH');
+
+insert into local values(1001,2,'Rua BoaRua','(43)9699-9999');
+
+insert into empregado values(50,'Erikson','Ildeu Braulio Filgueras','31/08/1996',1001,2,'olaMundo',32);
+
+update empregado set extensao = '2423' where n_emp = 50;
+
+select nome from empregado where n_emp = 50;
+
+select empr.nome from empregado emp, empresa empr where emp.n_contrib_empresa = empr.n_contrib and emp.n_emp = 50;
+
+select count(*) from empresa;
+
+select empr.nome from empregado emp, empresa empr where emp.n_contrib_empresa = empr.n_contrib group by empr.nome,emp.n_emp having count(*) < 3 order by empr.nome;
+
+select empr.nome from empregado emp, empresa empr, local l where empr.n_contrib = l.n_contrib and emp.n_filial = l.n_filial and emp.n_contrib_empresa = l.n_contrib group by empr.nome,emp.n_emp having count(*) = 0 order by empr.nome;
+
+select emp.nome from empresa emp, local l where emp.n_contrib = l.n_contrib;
